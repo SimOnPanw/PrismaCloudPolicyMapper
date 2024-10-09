@@ -18,7 +18,7 @@ def print_parsed_policies(policies):
         #     print(policy['name'])
         if ('iam' in policy.get('policyType', []) and
             policy.get('policyMode') == 'redlock_default'):
-            logger.info(policy['name']) 
+            logger.info(f"{policy['name']};{policy['cloudType']};{policy['policyCategory']};{policy['policyClass']};{policy['remediable']}") 
 
             
 def get_policies(base_url, token):
