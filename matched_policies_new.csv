@@ -1,0 +1,3 @@
+policy_name,labels,compliance_framework,compliance_requirement,compliance_section,status
+"""AWS Lambda Function resource-based policy is overly permissive""","""CUSTOM""","""CUSTOM - COMPLIANCE FRAMEWORK""","""Protect""","""API protection""",true
+"""GCP Compute Engine entities with predefined Admin roles""","""IAM""","""NA""","""NA""","""NA""",true

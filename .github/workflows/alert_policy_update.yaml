@@ -1,0 +1,44 @@
+name: Send an email with updated policies
+
+on:
+  # schedule:
+  #   - cron: '0 3 * * *' # every day at 3AM
+  workflow_dispatch: # on button click
+    inputs:
+      HOURS:
+        description: 'Last hours'
+        required: true
+        default: '24'
+
+env:
+  PRISMA_API_URL: ${{ secrets.PRISMA_API_URL }}
+  PRISMA_ACCESS_KEY: ${{ secrets.PRISMA_ACCESS_KEY }}
+  PRISMA_SECRET_KEY: ${{ secrets.PRISMA_SECRET_KEY }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  # Email Settings
+  SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+  RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+
+jobs:
+  sync:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 
+        run: |
+          python alert_policy_update.py --hours ${{ github.event.inputs.HOURS }}

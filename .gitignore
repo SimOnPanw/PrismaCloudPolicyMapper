@@ -1,0 +1,9 @@
+app.log
+events.log
+venv
+azure.json
+acr_onboarding.bash
+.env
+policies.json
+PolicyNotInPrisma.md
+policy_names.txt
