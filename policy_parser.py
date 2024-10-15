@@ -9,6 +9,33 @@ from dotenv import load_dotenv
 # Create a logger object
 logger = logging.getLogger()
 
+
+def filter_policies_by_standard(policies, standard_name):
+    filtered_policies = []
+    
+    for policy in policies:
+        if 'complianceMetadata' in policy:
+            for compliance in policy['complianceMetadata']:
+                if compliance.get('standardName') == standard_name:
+                    filtered_policies.append({
+                        'policy_name': f'"{policy["name"]}"',
+                        'labels': '"Custom"',
+                        'compliance_framework': f'"{compliance.get("standardName")}"',
+                        'compliance_requirement': f'"{compliance.get("requirementId")}"',
+                        'compliance_section': f'"{compliance.get("sectionId")}"',
+                        'status': 'true'
+                    })
+    return filtered_policies
+
+def write_policies_to_csv(filtered_policies, output_csv):
+    fieldnames = ['policy_name', 'labels', 'compliance_framework', 'compliance_requirement', 'compliance_section', 'status']
+    
+    with open(output_csv, mode='w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        for policy in filtered_policies:
+            writer.writerow(policy)
+
 # Print the name of each policy where cloudType is AWS, policySubTypes contains "run", and policyMode is "redlock_default"
 def print_parsed_policies(policies):
     for policy in policies:
@@ -120,8 +147,22 @@ def main():
         logger.error("Unable to authenticate.")
         return  
     
+    policies = get_policies(url, token)
     
-    print_parsed_policies(get_policies(url, token))
+    # print_parsed_policies(policies)
+    # Specify the standard name to filter by
+    standard_name = 'CIS v1.2.0 (Azure)'  # Replace with your desired standard_name
+
+    # Filter policies based on complianceMetadata standardName
+    filtered_policies = filter_policies_by_standard(policies, standard_name)
+
+    # Output CSV file
+    output_csv_file = 'filtered_policies.csv'
+    
+    # Write filtered policies to CSV
+    write_policies_to_csv(filtered_policies, output_csv_file)
+    print(f"Filtered policies saved to {output_csv_file}")
+
 
 if __name__ == "__main__":
     main()
